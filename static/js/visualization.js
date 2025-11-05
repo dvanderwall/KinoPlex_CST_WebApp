@@ -340,6 +340,14 @@
             .attr('class', 'lollipop')
             .attr('data-site-id', d => d.site_id);
 
+        // Helper function to determine if a site meets current FDR threshold
+        function meetsThreshold(d) {
+            if (currentFDRThreshold === 0.05) return d.fdr_05;
+            if (currentFDRThreshold === 0.02) return d.fdr_02;
+            if (currentFDRThreshold === 0.01) return d.fdr_01;
+            return d.fdr_05; // default
+        }
+
         // Add the stem (line from baseline to head)
         lollipopEnter.append('line')
             .attr('class', 'lollipop-stem')
@@ -347,7 +355,7 @@
             .attr('x2', d => xScale(d.position))
             .attr('y1', height)
             .attr('y2', d => yScale(d.probability_calibrated))
-            .style('stroke', d => d.fdr_05 ? '#10B981' : '#6B7280')
+            .style('stroke', d => meetsThreshold(d) ? '#10B981' : '#6B7280')  // Green if meets threshold, gray if not
             .style('stroke-width', 2);
 
         // Add the head (circle at the top)
@@ -357,8 +365,8 @@
             .attr('cy', d => yScale(d.probability_calibrated))
             .attr('r', d => d.known_positive ? 7 : 5)
             .style('fill', d => {
-                if (d.known_positive) return '#EAB308';
-                return d.fdr_05 ? '#10B981' : '#6B7280';
+                if (d.known_positive) return '#EAB308';  // Gold for known sites
+                return meetsThreshold(d) ? '#10B981' : '#6B7280';  // Green if meets threshold, gray if not
             })
             .style('stroke', d => d.known_positive ? '#CA8A04' : 'none')
             .style('stroke-width', 2)
@@ -372,7 +380,7 @@
             })
             .on('mouseout', hideTooltip);
 
-        // Update existing lollipops
+        // Update existing lollipops (for when threshold changes)
         const allLollipops = plotGroup.selectAll('.lollipop');
 
         allLollipops.select('.lollipop-stem')
@@ -380,13 +388,18 @@
             .duration(300)
             .attr('x1', d => xScale(d.position))
             .attr('x2', d => xScale(d.position))
-            .attr('y2', d => yScale(d.probability_calibrated));
+            .attr('y2', d => yScale(d.probability_calibrated))
+            .style('stroke', d => meetsThreshold(d) ? '#10B981' : '#6B7280');  // Update color based on threshold
 
         allLollipops.select('.lollipop-head')
             .transition()
             .duration(300)
             .attr('cx', d => xScale(d.position))
-            .attr('cy', d => yScale(d.probability_calibrated));
+            .attr('cy', d => yScale(d.probability_calibrated))
+            .style('fill', d => {
+                if (d.known_positive) return '#EAB308';
+                return meetsThreshold(d) ? '#10B981' : '#6B7280';  // Update color based on threshold
+            });
     }
 
     /**
@@ -953,14 +966,8 @@
     function getFilteredSites() {
         let sites = [...proteinData.sites];
 
-        // Apply FDR threshold filter
-        if (currentFDRThreshold === 0.05) {
-            sites = sites.filter(s => s.fdr_05);
-        } else if (currentFDRThreshold === 0.02) {
-            sites = sites.filter(s => s.fdr_02);
-        } else if (currentFDRThreshold === 0.01) {
-            sites = sites.filter(s => s.fdr_01);
-        }
+        // DO NOT filter by FDR threshold - that should only affect color!
+        // FDR threshold is handled in the drawing functions for coloring
 
         // Apply residue type filter
         if (currentResidueFilter !== 'all') {
@@ -1408,6 +1415,144 @@
             color: #6B7280;
             text-align: center;
             margin-top: 8px;
+        }
+        
+        /* Kinase progress bar styles */
+        .kinase-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        
+        .kinase-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .kinase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .kinase-name {
+            color: #D1D5DB;
+            font-weight: 500;
+        }
+        
+        .kinase-score {
+            color: #A78BFA;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        
+        .kinase-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(31, 41, 55, 0.8);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .kinase-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease-out;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(139, 92, 246, 0.3);
+        }
+        
+        .kinase-bar-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 4px;
+        }
+        
+        /* Site details panel sections */
+        .detail-section {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .detail-subtitle {
+            font-size: 14px;
+            font-weight: 600;
+            color: #A78BFA;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .detail-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .detail-label {
+            color: #9CA3AF;
+        }
+        
+        .detail-value {
+            color: #F9FAFB;
+            font-weight: 500;
+        }
+        
+        .fdr-badges {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .fdr-badges span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .known-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FBB308 0%, #F59E0B 100%);
+            color: #1A202C;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-left: 8px;
+        }
+        
+        .detail-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #F9FAFB;
+            margin-bottom: 16px;
+        }
+        
+        .panel-content {
+            padding: 20px;
         }
     `;
     document.head.appendChild(style);
