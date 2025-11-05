@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Error - KinoPlex{% endblock %}
+
+{% block content %}
+<section class="error-section">
+    <div class="container">
+        <div class="error-content">
+            <!-- Error icon -->
+            <div class="error-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 8V12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="16" r="1" fill="currentColor"/>
+                </svg>
+            </div>
+
+            <!-- Error message -->
+            <h1 class="error-title">{{ message }}</h1>
+
+            {% if search_again %}
+            <!-- Search again option -->
+            <p class="error-description">
+                The protein you're looking for couldn't be found in our database.
+                Try searching with a different identifier or check your spelling.
+            </p>
+
+            <a href="{{ url_for('index') }}" class="error-button">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Search Again
+            </a>
+            {% else %}
+            <a href="{{ url_for('index') }}" class="error-button">
+                Return Home
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!--
+Hero Section - The First Impression
+This section immediately communicates what KinoPlex does and invites action.
+The gradient background creates visual depth, while the centered layout focuses attention.
+-->
+<section class="hero">
+    <div class="container">
+        <div class="hero-content">
+            <!-- Main headline - establishes credibility and purpose -->
+            <h1 class="hero-title">
+                Predict Phosphorylation Sites with
+                <span class="gradient-text">Structure-Based Precision</span>
+            </h1>
+
+            <!-- Supporting text - explains the value proposition -->
+            <p class="hero-subtitle">
+                KinoPlex combines structure-based machine learning with comprehensive kinase
+                specificity profiling to predict phosphorylation sites across the human proteome.
+                Explore predicted sites, visualize phosphorylation landscapes, and identify
+                potential kinase-substrate relationships.
+            </p>
+
+            <!--
+            The Search Interface - Hero Element
+            This is the primary call-to-action. The large, centered design with
+            the prominent purple button guides users naturally toward their first interaction.
+            -->
+            <div class="search-container">
+                <div class="search-box">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 21L15 15M17 10C17 13.866 13.866 17 10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10Z"
+                              stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+
+                    <!--
+                    The input field supports both UniProt IDs and gene symbols
+                    As users type, autocomplete suggestions appear below
+                    -->
+                    <input
+                        type="text"
+                        id="proteinSearch"
+                        class="search-input"
+                        placeholder="Enter UniProt ID or gene symbol (e.g., DHX8, Q14562)"
+                        autocomplete="off"
+                        aria-label="Search for protein"
+                    >
+
+                    <!-- The prominent purple button that triggers the search -->
+                    <button id="searchButton" class="search-button" aria-label="Search protein">
+                        <span class="button-text">Query Protein</span>
+                        <svg class="button-icon" viewBox="0 0 24 24" fill="none">
+                            <path d="M5 12H19M19 12L12 5M19 12L12 19"
+                                  stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <!--
+                Autocomplete dropdown
+                Populated dynamically as user types, showing matching proteins
+                Hidden by default, appears when results are available
+                -->
+                <div id="autocompleteResults" class="autocomplete-results"></div>
+
+                <!-- Search status messages -->
+                <div id="searchMessage" class="search-message"></div>
+            </div>
+
+            <!--
+            Quick examples - helps users get started
+            These are common proteins that demonstrate the system's capabilities
+            -->
+            <div class="examples">
+                <span class="examples-label">Try these examples:</span>
+                <button class="example-link" data-protein="Q14562">DHX8</button>
+                <button class="example-link" data-protein="P31749">AKT1</button>
+                <button class="example-link" data-protein="P04637">TP53</button>
+                <button class="example-link" data-protein="P42345">MTOR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Decorative gradient overlay for visual depth -->
+    <div class="hero-gradient"></div>
+</section>
+
+<!--
+Features Section - Educational Content
+This section explains KinoPlex's capabilities in accessible terms,
+helping users understand what makes this tool powerful and unique.
+-->
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">Comprehensive Phosphorylation Analysis</h2>
+
+        <div class="features-grid">
+            <!-- Feature 1: Structure-Based Predictions -->
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #8B5CF6 0%, #6366F1 100%);">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 17L12 22L22 17" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M2 12L12 17L22 12" stroke="white" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Structure-Based ML</h3>
+                <p class="feature-description">
+                    Our models integrate 3D structural information to predict phosphorylation
+                    competency, going beyond sequence-based approaches to capture the structural
+                    context that determines kinase accessibility.
+                </p>
+            </div>
+
+            <!-- Feature 2: Kinase Specificity -->
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #EC4899 0%, #8B5CF6 100%);">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="3" stroke="white" stroke-width="2"/>
+                        <path d="M12 1V4M12 20V23M23 12H20M4 12H1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M20.49 4.51L18 7M6 17L3.51 19.49M20.49 19.49L18 17M6 7L3.51 4.51"
+                              stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Kinase Specificity Profiling</h3>
+                <p class="feature-description">
+                    Comprehensive PSSM-based kinase specificity predictions across hundreds of
+                    kinases, helping you identify the most likely kinases responsible for
+                    phosphorylating specific sites.
+                </p>
+            </div>
+
+            <!-- Feature 3: Interactive Visualization -->
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #06B6D4 0%, #3B82F6 100%);">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M3 3V21H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M7 14L11 10L15 14L21 8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="7" cy="14" r="2" fill="white"/>
+                        <circle cx="11" cy="10" r="2" fill="white"/>
+                        <circle cx="15" cy="14" r="2" fill="white"/>
+                        <circle cx="21" cy="8" r="2" fill="white"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Interactive Visualization</h3>
+                <p class="feature-description">
+                    Explore phosphorylation landscapes with intuitive lollipop plots, showing
+                    site positions, prediction confidence, and kinase specificity in a single
+                    comprehensive view.
+                </p>
+            </div>
+
+            <!-- Feature 4: High Confidence Predictions -->
+            <div class="feature-card">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M9 12L11 14L15 10" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <circle cx="12" cy="12" r="9" stroke="white" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h3 class="feature-title">Calibrated Confidence</h3>
+                <p class="feature-description">
+                    Multiple FDR thresholds (1%, 2%, 5%) allow you to balance sensitivity and
+                    specificity based on your experimental needs. All predictions are calibrated
+                    against known phosphorylation sites.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Home page specific JavaScript -->
+<script src="{{ url_for('static', filename='js/search.js') }}"></script>
+{% endblock %}

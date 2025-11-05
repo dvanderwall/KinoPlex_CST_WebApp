@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About KinoPlex - Structural Atlas of Human Phosphorylation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --light-bg: #ecf0f1;
+            --dark-bg: #34495e;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white !important;
+        }
+
+        .navbar-nav .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--secondary-color) !important;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-weight: 600;
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .methodology-step {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 30px;
+        }
+
+        .methodology-step .step-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .citation-box {
+            background: #f8f9fa;
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 5px;
+        }
+
+        .team-section {
+            background: white;
+            padding: 50px 0;
+            margin-top: 50px;
+        }
+
+        .badge-custom {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="fas fa-network-wired me-2"></i>KinoPlex
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a href="{{ url_for('index') }}" class="nav-link">Search</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://github.com/dvanderwall/KinoPlex" target="_blank">
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 mb-4">KinoPlex: A Structural Atlas of Human Phosphorylation</h1>
+            <p class="lead">Decoding kinase specificity across the human proteome through AI-powered structural analysis</p>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Overview Section -->
+        <section class="mb-5">
+            <h2 class="section-title">Overview</h2>
+            <div class="row">
+                <div class="col-lg-8">
+                    <p class="lead">
+                        KinoPlex is a comprehensive structural atlas that predicts phosphorylation potential and kinase specificity
+                        for all 1.8 million serine, threonine, and tyrosine residues in the human proteome.
+                    </p>
+                    <p>
+                        Phosphorylation is a critical protein modification that regulates nearly all cellular processes. However,
+                        among the 1.8 million potential phosphorylation sites in human proteins, only ~6% have been experimentally
+                        validated, and fewer than 5% of these have been mapped to specific kinases. KinoPlex bridges this gap by
+                        combining AlphaFold structural predictions with machine learning to systematically predict which sites can
+                        be phosphorylated and which kinases are likely responsible.
+                    </p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number">1.8M</div>
+                                <div>STY Sites Analyzed</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number">567K</div>
+                                <div>Phospho-competent</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number">400+</div>
+                                <div>Kinases Mapped</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number">92%</div>
+                                <div>Prediction Accuracy</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features Section -->
+        <section class="mb-5">
+            <h2 class="section-title">Website Features</h2>
+            <div class="row">
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <h4>Protein Search</h4>
+                        <p>
+                            Search for any human protein using UniProt ID or gene symbol. Browse through auto-complete
+                            suggestions from our database of 20,000+ proteins.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4>Phosphorylation Predictions</h4>
+                        <p>
+                            View all potential phosphorylation sites with confidence scores. Sites are colored by their
+                            structural phospho-competency and known validation status.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <h4>Kinase Specificity</h4>
+                        <p>
+                            Explore predicted kinase-substrate relationships based on motif analysis and structural
+                            compatibility for over 400 human kinases.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-dna"></i>
+                        </div>
+                        <h4>Interactive Visualization</h4>
+                        <p>
+                            Navigate phosphorylation sites along the protein sequence with an interactive visualization
+                            showing site distribution and confidence levels.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-microscope"></i>
+                        </div>
+                        <h4>Detailed Site Analysis</h4>
+                        <p>
+                            Click on any site to view detailed information including structural features, top predicted
+                            kinases, and experimental validation status.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <h4>Data Export</h4>
+                        <p>
+                            Download prediction data for further analysis. Access the complete dataset through our
+                            GitHub repository and supplementary materials.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Methodology Section -->
+        <section class="mb-5">
+            <h2 class="section-title">Our Approach</h2>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="methodology-step">
+                        <div class="step-number">1</div>
+                        <h4>Structural Feature Extraction</h4>
+                        <p>
+                            We analyzed ~20,000 AlphaFold protein structures, extracting over 100 structural features for
+                            each of the 1.8 million STY residues. These features include solvent accessibility, disorder
+                            predictions, packing density, and local electrostatics.
+                        </p>
+                    </div>
+                    <div class="methodology-step">
+                        <div class="step-number">2</div>
+                        <h4>Machine Learning Classification</h4>
+                        <p>
+                            Using positive-unlabeled transfer learning with XGBoost, we trained models to identify
+                            structurally phospho-competent sites. Our models achieve corrected AUCs of ~0.92 for S/T
+                            and 0.91 for Y residues.
+                        </p>
+                    </div>
+                    <div class="methodology-step">
+                        <div class="step-number">3</div>
+                        <h4>Kinase Motif Scoring</h4>
+                        <p>
+                            We scored all sites against position-specific scoring matrices (PSSMs) for over 400 kinases,
+                            derived from systematic peptide library screening data, to predict kinase-substrate relationships.
+                        </p>
+                    </div>
+                    <div class="methodology-step">
+                        <div class="step-number">4</div>
+                        <h4>Integrated Predictions</h4>
+                        <p>
+                            By intersecting structural phospho-competency with kinase motif scores, we identify ~250,000
+                            high-confidence phosphorylation sites with both optimal structure and kinase recognition potential.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Findings Section -->
+        <section class="mb-5">
+            <h2 class="section-title">Key Scientific Insights</h2>
+            <div class="row">
+                <div class="col-lg-6">
+                    <h4><i class="fas fa-lightbulb text-warning me-2"></i>Structural Gating</h4>
+                    <p>
+                        ~70% of STY residues are structurally prohibited from phosphorylation regardless of sequence context,
+                        explaining why only a small fraction of potential sites are actually phosphorylated.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <h4><i class="fas fa-lightbulb text-warning me-2"></i>Kinase Selection Strategies</h4>
+                    <p>
+                        Kinases employ divergent strategies: some achieve specificity through "structural scarcity"
+                        (targeting rare accessible motifs), while others gain broad influence through "structural promiscuity."
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <h4><i class="fas fa-lightbulb text-warning me-2"></i>Motif-Structure Coupling</h4>
+                    <p>
+                        Linear motifs encode their own structural presentation - phosphorylation-prone motifs inherently
+                        favor disordered, accessible conformations.
+                    </p>
+                </div>
+                <div class="col-lg-6">
+                    <h4><i class="fas fa-lightbulb text-warning me-2"></i>Evolutionary Conservation</h4>
+                    <p>
+                        The structural constraints governing phosphorylation are evolutionarily conserved across species,
+                        suggesting fundamental biophysical principles.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Citation Section -->
+        <section class="mb-5" id="citation">
+            <h2 class="section-title">Citation</h2>
+            <div class="citation-box">
+                <p class="mb-2">
+                    <strong>A structural atlas decodes kinase specificity across the human proteome</strong>
+                </p>
+                <p class="mb-2">
+                    David R. Vanderwall, Edward L. Huttlin, Julian Mintseris, Tomer M. Yaron-Barir, Jared L. Johnson,
+                    Kevin D. Dong, Alex J. Bott, Yuchen He, Christina B. Schroeter, Geordon A. Frere, Mohamed Uduman,
+                    Harin Lee, Sean A. Beausoleil, Joao Paulo, Lewis C. Cantley, Steven P. Gygi
+                </p>
+                <p class="text-muted mb-0">
+                    <em>Manuscript in review</em>
+                </p>
+            </div>
+        </section>
+
+        <!-- Resources Section -->
+        <section class="mb-5">
+            <h2 class="section-title">Resources & Data</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>Access the Data</h4>
+                    <ul>
+                        <li><a href="https://github.com/dvanderwall/KinoPlex" target="_blank">GitHub Repository</a> - Source code and analysis scripts</li>
+                        <li><a href="https://www.phosphosite.org" target="_blank">PhosphositePlus</a> - Curated phosphorylation database</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h4>Technical Details</h4>
+                    <ul>
+                        <li>AlphaFold v2.0 structures (2021 release)</li>
+                        <li>XGBoost classifier with PU-learning correction</li>
+                        <li>303 S/T kinases + 90 Y kinases analyzed</li>
+                        <li>Validated on 40,000+ phosphosites from K562 cells</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <div class="team-section" id="team">
+            <div class="container">
+                <h2 class="section-title">Research Team</h2>
+                    <p class="mb-4">
+                        KinoPlex was developed through a collaboration between the Gygi and Cantley laboratories at
+                        Harvard Medical School and Dana-Farber Cancer Institute, with support from Cell Signaling Technology.
+                    </p>
+
+                    <!-- Project Leadership -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h4 class="mb-3">Project Leadership</h4>
+                            <div class="mb-3">
+                                <strong>Project Lead:</strong><br>
+                                David R. Vanderwall, MD-PhD Student, Harvard Medical School (contact: dvanderwall@hms.harvard.edu)
+                            </div>
+                            <div class="mb-3">
+                                <strong>Principal Investigators:</strong><br>
+                                Steven P. Gygi, PhD - Department of Cell Biology, Harvard Medical School<br>
+                                Lewis C. Cantley, PhD - Department of Cell Biology, Dana-Farber Cancer Institute
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Team Members -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h4 class="mb-3">Meet the Team</h4>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <strong>Edward L. Huttlin, PhD</strong><br>
+                                    Instructor of Cell Biology, Harvard Medical School
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Julian Mintseris, PhD</strong><br>
+                                    Staff Scientist, Department of Cell Biology, Harvard Medical School
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Jared L. Johnson, PhD</strong><br>
+                                    Instructor of Cell Biology, Harvard Medical School
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <strong>Tomer M. Yaron-Barir, MD, PhD</strong><br>
+                                    Pediatric Resident, Boston Children's Hospital
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Institution Badges -->
+                    <div class="text-center mt-4">
+                        <span class="badge-custom">Harvard Medical School</span>
+                        <span class="badge-custom">Dana-Farber Cancer Institute</span>
+                        <span class="badge-custom">Boston Children's Hospital</span>
+                        <span class="badge-custom">Cell Signaling Technology</span>
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">© 2024 KinoPlex - Harvard Medical School</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

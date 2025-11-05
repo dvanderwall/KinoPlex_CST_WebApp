@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}KinoPlex - Next Generation Phosphorylation Prediction{% endblock %}</title>
+
+    <!-- Google Fonts - Using Inter for clean, modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- D3.js for visualizations -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Our custom stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!--
+    Navigation bar - present on all pages
+    This provides consistent branding and navigation context
+    -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-content">
+                <a href="{{ url_for('index') }}" class="brand">
+                    <!--
+                    The DNA helix icon represents our focus on molecular biology
+                    while the gradient adds visual sophistication
+                    -->
+                    <svg class="logo-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="url(#gradient1)"/>
+                        <circle cx="12" cy="8" r="2" fill="url(#gradient1)"/>
+                        <circle cx="12" cy="16" r="2" fill="url(#gradient1)"/>
+                        <path d="M8 12h8" stroke="url(#gradient1)" stroke-width="2"/>
+                        <defs>
+                            <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#8B5CF6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#6366F1;stop-opacity:1" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <span class="brand-text">
+                        <span class="brand-name">KinoPlex</span>
+                        <span class="brand-tagline">Powered by Cell Signaling Technology</span>
+                    </span>
+                </a>
+
+                <!-- Navigation links -->
+                <div class="nav-links">
+                    <a href="{{ url_for('index') }}" class="nav-link">Search</a>
+                    <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main content area - each page defines its own content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!--
+    Footer with attribution and links
+    Maintains the professional aesthetic while providing necessary information
+    -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 class="footer-title">KinoPlex</h3>
+                    <p class="footer-text">
+                        Next-generation phosphorylation site prediction powered by
+                        structure-based machine learning and comprehensive kinase specificity profiling.
+                    </p>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('about') }}#citation">How to Cite</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3 class="footer-title">About</h3>
+                    <ul class="footer-links">
+                        <li><a href="https://www.cellsignal.com" target="_blank">Cell Signaling Technology</a></li>
+                        <li><a href="{{ url_for('about') }}#team">Contact Us</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 Cell Signaling Technology, Inc. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Common JavaScript functionality -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+    <!-- Page-specific JavaScript -->
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

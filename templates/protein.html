@@ -1,0 +1,342 @@
+{% extends "base.html" %}
+
+{% block title %}{{ protein.gene_symbol or protein.uniprot }} - KinoPlex{% endblock %}
+
+{% block content %}
+<!--
+Protein Header Section
+-->
+<section class="protein-header">
+    <div class="container">
+        <div class="protein-info">
+            <div class="breadcrumb">
+                <a href="{{ url_for('index') }}">Home</a>
+                <span class="separator">/</span>
+                <span class="current">{{ protein.gene_symbol or protein.uniprot }}</span>
+            </div>
+
+            <h1 class="protein-title">
+                {% if protein.gene_symbol and protein.gene_symbol != 'N/A' %}
+                    {{ protein.gene_symbol }}
+                    <span class="protein-id">{{ protein.uniprot }}</span>
+                {% else %}
+                    {{ protein.uniprot }}
+                {% endif %}
+            </h1>
+
+            <!-- UniProt biological context -->
+            <div class="uniprot-summary">
+                <div class="summary-header">
+                    <h2 class="summary-title">Protein Information</h2>
+                    <span class="summary-source">Source: UniProt</span>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <span class="summary-label">Full Name:</span>
+                        <span class="summary-value">{{ uniprot.protein_name }}</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Organism:</span>
+                        <span class="summary-value">{{ uniprot.organism }}</span>
+                    </div>
+
+                    <div class="summary-item">
+                        <span class="summary-label">Sequence Length:</span>
+                        <span class="summary-value">{{ uniprot.length }} amino acids</span>
+                    </div>
+
+                    {% if uniprot.function != 'No functional annotation available.' %}
+                    <div class="summary-item summary-function">
+                        <span class="summary-label">Function:</span>
+                        <div class="summary-value function-text-container">
+                            <p class="function-text" id="functionText">
+                                <span class="function-truncated">{{ uniprot.function[:200] }}{% if uniprot.function|length > 200 %}...{% endif %}</span>
+                                <span class="function-full" style="display: none;">{{ uniprot.function }}</span>
+                            </p>
+                            {% if uniprot.function|length > 200 %}
+                            <button class="function-toggle-btn" id="functionToggle" onclick="toggleFunctionText()">
+                                <span class="toggle-text">Show more</span>
+                                <svg class="toggle-icon" width="12" height="12" viewBox="0 0 24 24" fill="none">
+                                    <path d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Statistics cards -->
+            <div class="protein-stats">
+                <div class="stat-badge">
+                    <div class="stat-badge-value">{{ stats.total_sites }}</div>
+                    <div class="stat-badge-label">Total Sites</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-badge-value">{{ stats.high_confidence_sites }}</div>
+                    <div class="stat-badge-label">High Confidence</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-badge-value">{{ stats.known_positive_sites }}</div>
+                    <div class="stat-badge-label">Known Sites</div>
+                </div>
+                <div class="stat-badge">
+                    <div class="stat-badge-value">{{ stats.max_position }}</div>
+                    <div class="stat-badge-label">Protein Length</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--
+Controls Section
+-->
+<section class="controls-section">
+    <div class="container">
+        <div class="controls-panel">
+            <!-- Zoom Controls -->
+            <div class="control-group">
+                <label class="control-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="vertical-align: middle;">
+                        <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                        <path d="M21 21L16.65 16.65" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M8 11H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M11 8V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Zoom:
+                </label>
+                <div class="button-group">
+                    <button id="zoomToSelection" class="control-button" title="Click and drag on the plot to zoom into a region">
+                        Zoom to Region
+                    </button>
+                    <button id="zoomReset" class="control-button" title="Reset to view full protein">
+                        Reset View
+                    </button>
+                </div>
+                <p class="control-help" id="zoomStatus" style="display: none;">
+                    <!-- Status message appears here when zoomed -->
+                </p>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">FDR Threshold:</label>
+                <div class="button-group">
+                    <button class="control-button active" data-fdr="0.05">5%</button>
+                    <button class="control-button" data-fdr="0.02">2%</button>
+                    <button class="control-button" data-fdr="0.01">1%</button>
+                </div>
+                <p class="control-help">
+                    Lower thresholds show only the most confident predictions
+                </p>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">Residue Type:</label>
+                <div class="button-group">
+                    <button class="control-button active" data-residue="all">All</button>
+                    <button class="control-button" data-residue="S">Serine</button>
+                    <button class="control-button" data-residue="T">Threonine</button>
+                    <button class="control-button" data-residue="Y">Tyrosine</button>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label class="control-label">
+                    <input type="checkbox" id="showKnownOnly" class="control-checkbox">
+                    Show only known sites
+                </label>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--
+Main Visualization Section - Integrated Lollipop Plot with Sequence Strip
+The sequence appears as a scrollable strip at the bottom of this visualization
+-->
+<section class="visualization-section">
+    <div class="container">
+        <div class="visualization-container">
+            <div class="visualization-header">
+                <h2 class="visualization-title">{{ protein.gene_symbol or protein.uniprot }} Phosphorylation Landscape</h2>
+                <div class="visualization-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #10B981;"></div>
+                        <span>Phosphocompetent</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #6B7280;"></div>
+                        <span>Not Phosphocompetent</span>
+                    </div>
+                    <div class="legend-item">
+                        <svg width="16" height="16">
+                            <rect x="4" y="4" width="8" height="8" fill="#EAB308" stroke="#CA8A04" stroke-width="2"/>
+                        </svg>
+                        <span>Known Site</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The integrated visualization renders here - includes both plot and sequence -->
+            <div id="lollipopPlot" class="plot-container">
+                <div class="loading-spinner">
+                    <div class="spinner"></div>
+                    <p>Loading visualization...</p>
+                </div>
+            </div>
+
+            <p style="margin-top: 16px; color: #9CA3AF; font-size: 14px; font-style: italic; text-align: center;">
+                Tip: Scroll horizontally in the sequence strip at the bottom to explore the full protein.
+                Click any S/T/Y amino acid to view predictions for that position.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!--
+Site Details Panel
+Opens when clicking on a site in the plot or sequence
+-->
+<div id="siteDetailsPanel" class="site-details-panel">
+    <div class="panel-header">
+        <h3 class="panel-title">Site Details</h3>
+        <button id="closePanelButton" class="close-button" aria-label="Close panel">
+            <svg viewBox="0 0 24 24" fill="none">
+                <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </button>
+    </div>
+
+    <div id="panelContent" class="panel-content">
+        <!-- Content populated dynamically -->
+    </div>
+</div>
+
+<!--
+Kinase Specificity Section
+-->
+<section class="kinase-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Kinase Specificity Profile</h2>
+            <p class="section-description">
+                Click on any site above to see its detailed kinase specificity predictions.
+                Or explore the complete kinase profile across all sites below.
+            </p>
+        </div>
+
+        <div class="kinase-filter">
+            <label for="kinaseSelect" class="control-label">Select Kinase:</label>
+            <select id="kinaseSelect" class="kinase-select">
+                <option value="">-- Select a kinase --</option>
+            </select>
+        </div>
+
+        <div id="kinaseProfile" class="kinase-profile-container">
+            <p class="help-text">Select a kinase to view its specificity profile across all sites</p>
+        </div>
+    </div>
+</section>
+
+<!--
+Data Export Section - Enhanced with Plot and Kinase Profile Export
+-->
+<section class="export-section">
+    <div class="container">
+        <div class="export-panel">
+            <h3 class="export-title">Export Data & Visualizations</h3>
+            <p class="export-description">
+                Download the phosphorylation data, visualizations, and complete kinase profiles for your analysis
+            </p>
+
+            <!-- Data Export Options -->
+            <div class="export-group">
+                <h4 class="export-subtitle">Data Export</h4>
+                <div class="export-buttons">
+                    <button id="exportCSV" class="export-button">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Sites CSV
+                    </button>
+                    <button id="exportJSON" class="export-button">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M7 10L12 15L17 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <path d="M12 15V3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Full JSON
+                    </button>
+                    <button id="exportKinaseProfile" class="export-button export-button-primary">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M9 9h6M9 12h6M9 15h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Kinase Profile (All Sites)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Visualization Export Options -->
+            <div class="export-group">
+                <h4 class="export-subtitle">Visualization Export</h4>
+                <div class="export-buttons">
+                    <button id="exportPlotSVG" class="export-button">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <polyline points="3 7 12 16 21 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Plot as SVG
+                    </button>
+                    <button id="exportPlotPNG" class="export-button">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/>
+                            <polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Plot as PNG
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+// Function to toggle the function text expansion
+function toggleFunctionText() {
+    const truncated = document.querySelector('.function-truncated');
+    const full = document.querySelector('.function-full');
+    const toggleBtn = document.getElementById('functionToggle');
+    const toggleText = toggleBtn.querySelector('.toggle-text');
+    const toggleIcon = toggleBtn.querySelector('.toggle-icon');
+
+    if (full.style.display === 'none') {
+        // Expand
+        truncated.style.display = 'none';
+        full.style.display = 'inline';
+        toggleText.textContent = 'Show less';
+        toggleIcon.style.transform = 'rotate(180deg)';
+    } else {
+        // Collapse
+        truncated.style.display = 'inline';
+        full.style.display = 'none';
+        toggleText.textContent = 'Show more';
+        toggleIcon.style.transform = 'rotate(0deg)';
+    }
+}
+</script>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    const PROTEIN_ID = "{{ protein.uniprot }}";
+</script>
+<script src="{{ url_for('static', filename='js/visualization.js') }}"></script>
+{% endblock %}
